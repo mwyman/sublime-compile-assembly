@@ -69,7 +69,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       args.append(optimization_level)
     if extra_args is not None:
       args.extend(extra_args)
-    args.extend(settings.get('extra_args'))
+    args.extend(settings.get('extra_args', []))
     args.append('-S')
     args.append('-o-')
     args.append(vars['file_name'])
