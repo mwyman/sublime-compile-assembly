@@ -1,0 +1,43 @@
+{
+    "target": "clang_compile_asm",
+    "selector": "source.c, source.c++, source.objc, source.objc++",
+    "variants": [
+      {
+        "name": "arm64",
+        "arch": "arm64",
+        "sdk": "iphoneos",
+        "extra_args": [],
+      },
+      {
+        "name": "arm64 non-ARC",
+        "arch": "arm64",
+        "sdk": "iphoneos",
+        "extra_args": ["-fno-objc-arc"],
+        "selector": "source.objc, source.objc++",
+      },
+      {
+        "name": "armv7",
+        "arch": "armv7",
+        "sdk": "iphoneos",
+        "extra_args": [],
+      },
+      {
+        "name": "x64",
+        "arch": "x86_64",
+        "sdk": "iphonesimulator",
+        "extra_args": [],
+      },
+      {
+        "name": "i386",
+        "arch": "i386",
+        "sdk": "iphonesimulator",
+        "extra_args": [],
+      },
+      {
+        "name": "LLVM IL",
+        "arch": "llvm",
+        "sdk": "iphoneos",
+        "extra_args": [],
+      }
+    ]
+  }

@@ -1,0 +1,12 @@
+{
+  // Assembly optimization level.
+  "optimization_level": "-Os",
+  "extra_args": ["-g0"],
+
+  // Syntax files
+  "syntax_file.arm64": "Packages/ARM Assembly/Syntaxes/ARM Assembly.tmLanguage",
+  "syntax_file.armv7": "Packages/ARM Assembly/Syntaxes/ARM Assembly.tmLanguage",
+  "syntax_file.x86_64": "Packages/x86 and x86_64 Assembly/x86_64 Assembly.tmbundle/Syntaxes/x86_64 Assembly.tmLanguage",
+  "syntax_file.i386": "Packages/x86 and x86_64 Assembly/x86_64 Assembly.tmbundle/Syntaxes/x86_64 Assembly.tmLanguage",
+  "syntax_file.llvm": "Packages/LLVM/Syntaxes/LLVM.tmLanguage"
+}
