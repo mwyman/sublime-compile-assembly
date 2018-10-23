@@ -34,7 +34,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
     compile_options = settings.get("compile_options%s" % (file_extension))
 
-    use_modules = active_view.find(r'^\s*@import\b', 0) is not None
+    use_modules = self.shouldUseModules(active_view)
 
     # A lock is used to ensure only one thread is
     # touching the output panel at a time
@@ -137,6 +137,10 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   def do_write(self, text):
     with self.panel_lock:
       self.panel.run_command('content_append', {'text': text})
+
+  def shouldUseModules(self, view):
+    region = view.find(r'^\s*@import\b', 0)
+    return region is not None and not region.empty()
 
 class ContentAppend(sublime_plugin.TextCommand):
   def run(self, edit, text):
