@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 
 import subprocess
+import tempfile
 import threading
 import os
 
@@ -17,13 +18,20 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   def run(self, arch=None, sdk=None, extra_args=None):
     active_view = self.window.active_view()
     vars = self.window.extract_variables()
-    working_dir = vars['file_path']
 
     settings = sublime.load_settings('Compile Assembly.sublime-settings')
     if settings is None:
       return
 
-    file_name = vars['file_name']
+    if hasattr(vars, 'file_name'):
+      file_name = vars['file_name']
+      working_dir = vars['file_path']
+    else:
+      # If the buffer being compiled is unnamed, give it a default name, using
+      # the most permissive compile options (ObjC++).
+      file_name = active_view.name() if active_view.name() else 'untitled.mm'
+      working_dir = tempfile.gettempdir()
+
     (base_file_name, file_extension) = os.path.splitext(file_name)
     asm_file_name = '%s.%s.asm' % (base_file_name, arch)
 
@@ -74,6 +82,9 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       args.extend(extra_args)
     if compile_options is not None:
       args.extend(compile_options)
+    else:
+      # As a fallback if no compile options are found, default to Objective-C++.
+      args.extend(['-x', 'objective-c++', '-std=c++11'])
     args.append('-S')
     args.append('-o-')
     args.append('-')
@@ -89,7 +100,8 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     self.killed = False
 
     current_file_text = active_view.substr(sublime.Region(0, active_view.size()))
-    self.do_write('; Compiled with: "%s"\n; -- Piping %d bytes to compiler\n\n' % (' '.join(args), len(current_file_text)))
+    self.do_write('; Compiled with: "%s"\n' % (' '.join(args)))
+    self.do_write('; -- Piped %d bytes to compiler\n\n' % (len(current_file_text)))
 
     threading.Thread(
       target=self.write_handle,
