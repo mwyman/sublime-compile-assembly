@@ -92,7 +92,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
     threading.Thread(
       target=self.write_handle,
-      args=(self.proc.stdin, active_view.substr(Region(0, active_view.size())),)
+      args=(self.proc.stdin, active_view.substr(sublime.Region(0, active_view.size())),)
     ).start()
 
     threading.Thread(
