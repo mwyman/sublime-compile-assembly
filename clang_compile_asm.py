@@ -15,6 +15,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     return True
 
   def run(self, arch=None, sdk=None, extra_args=None):
+    active_view = self.window.active_view()
     vars = self.window.extract_variables()
     working_dir = vars['file_path']
 
@@ -33,7 +34,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
     compile_options = settings.get("compile_options%s" % (file_extension))
 
-    use_modules = self.window.active_view().find(r'^\s*@import\b', 0) is not None
+    use_modules = active_view.find(r'^\s*@import\b', 0) is not None
 
     # A lock is used to ensure only one thread is
     # touching the output panel at a time
@@ -91,7 +92,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
     threading.Thread(
       target=self.write_handle,
-      args=(self.proc.stdin, self.view.substr(Region(0, self.view.size())))
+      args=(self.proc.stdin, active_view.substr(Region(0, active_view.size())),)
     ).start()
 
     threading.Thread(
@@ -101,6 +102,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
   def write_handle(self, handle, file_text):
     try:
+      self.queue_write('; -- Piping %d bytes to compiler' % (len(file_text)))
       os.write(handle.fileno(), file_text.encode(self.encoding))
       os.close(handle.fileno())
     except (UnicodeEncodeError) as e:
