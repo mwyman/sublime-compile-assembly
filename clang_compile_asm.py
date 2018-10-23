@@ -75,10 +75,12 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       args.extend(compile_options)
     args.append('-S')
     args.append('-o-')
-    args.append(vars['file_name'])
+    args.append('-')
+    # args.append(vars['file_name'])
 
     self.proc = subprocess.Popen(
       args,
+      stdin=subprocess.PIPE,
       stdout=subprocess.PIPE,
       stderr=subprocess.STDOUT,
       cwd=working_dir
@@ -88,9 +90,22 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     self.do_write('; Compiled with: "%s"\n\n' % (' '.join(args)))
 
     threading.Thread(
+      target=self.write_handle,
+      args=(self.proc.stdin,)
+    ).start()
+
+    threading.Thread(
       target=self.read_handle,
       args=(self.proc.stdout,)
     ).start()
+
+  def write_handle(self, handle, file_text):
+    try:
+      os.write(handle.fileno(), file_text.encode(self.encoding))
+      os.close(handle.fileno())
+    except (UnicodeEncodeError) as e:
+      msg = 'Error decoding input using %s - %s'
+      self.queue_write(msg % (self.encoding, str(e)))
 
   def read_handle(self, handle):
     chunk_size = 2 ** 13
