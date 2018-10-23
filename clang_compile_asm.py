@@ -88,11 +88,12 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     )
     self.killed = False
 
-    self.do_write('; Compiled with: "%s"\n\n' % (' '.join(args)))
+    current_file_text = active_view.substr(sublime.Region(0, active_view.size()))
+    self.do_write('; Compiled with: "%s"\n; -- Piping %d bytes to compiler\n\n' % (' '.join(args), len(current_file_text)))
 
     threading.Thread(
       target=self.write_handle,
-      args=(self.proc.stdin, active_view.substr(sublime.Region(0, active_view.size())),)
+      args=(self.proc.stdin, current_file_text,)
     ).start()
 
     threading.Thread(
@@ -102,7 +103,6 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
   def write_handle(self, handle, file_text):
     try:
-      self.queue_write('; -- Piping %d bytes to compiler' % (len(file_text)))
       os.write(handle.fileno(), file_text.encode(self.encoding))
       os.close(handle.fileno())
     except (UnicodeEncodeError) as e:
