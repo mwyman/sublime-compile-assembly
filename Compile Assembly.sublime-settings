@@ -1,7 +1,11 @@
 {
   // Assembly optimization level.
   "optimization_level": "-Os",
-  "extra_args": ["-g0"],
+  "compile_options.c": ["-x", "c", "-std=c11", "-g0"],
+  "compile_options.cc": ["-x", "c++", "-std=c++11", "-g0"],
+  "compile_options.cpp": ["-x", "c++", "-std=c++11", "-g0"],
+  "compile_options.m": ["-x", "objective-c", "-std=c11", "-g0"],
+  "compile_options.mm": ["-x", "objective-c++", "-std=c++11", "-g0"],
 
   // Syntax files
   "syntax_file.arm64": "Packages/ARM Assembly/Syntaxes/ARM Assembly.tmLanguage",

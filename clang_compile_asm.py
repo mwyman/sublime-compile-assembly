@@ -31,6 +31,8 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     else:
       use_objc_arc = False
 
+    compile_options = settings.get("compile_options%s" % (file_extension))
+
     use_modules = self.window.active_view().find(r'^\s*@import\b', 0) is not None
 
     # A lock is used to ensure only one thread is
@@ -69,7 +71,8 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       args.append(optimization_level)
     if extra_args is not None:
       args.extend(extra_args)
-    args.extend(settings.get('extra_args', []))
+    if compile_options is not None:
+      args.extend(compile_options)
     args.append('-S')
     args.append('-o-')
     args.append(vars['file_name'])
