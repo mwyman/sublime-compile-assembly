@@ -70,7 +70,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       # Custom builds of clang may need to provide an -isysroot for Apple
       # framework paths.
       if settings.has('clang_sysroot'):
-        args.append(settings.get('clang_sysroot'))
+        args.extend(['-isysroot', settings.get('clang_sysroot')])
     else:
       args.append('xcrun')
       args = ['xcrun']
