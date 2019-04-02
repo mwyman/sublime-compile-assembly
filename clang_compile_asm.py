@@ -23,7 +23,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     if settings is None:
       return
 
-    if hasattr(vars, 'file_name'):
+    if 'file_name' in vars:
       file_name = vars['file_name']
       working_dir = vars['file_path']
     else:
