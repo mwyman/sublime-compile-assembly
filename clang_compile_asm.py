@@ -61,10 +61,23 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       self.proc.terminate()
       self.proc = None
 
-    args = ['xcrun']
-    if sdk is not None:
-      args.extend(['--sdk', sdk])
-    args.append('clang')
+    args = []
+
+    if settings.has('clang_path') and settings.get('clang_path'):
+      # Support for custom builds of clang.
+      args.append(settings.get('clang_path'))
+
+      # Custom builds of clang may need to provide an -isysroot for Apple
+      # framework paths.
+      if settings.has('clang_sysroot'):
+        args.append(settings.get('clang_sysroot'))
+    else:
+      args.append('xcrun')
+      args = ['xcrun']
+      if sdk is not None:
+        args.extend(['--sdk', sdk])
+      args.append('clang')
+
     if arch is not None:
       if arch == 'llvm':
         args.extend(['-arch', 'arm64', '-emit-llvm'])
