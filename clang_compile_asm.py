@@ -91,6 +91,9 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     optimization_level = settings.get('optimization_level', '-Os')
     if optimization_level is not None:
       args.append(optimization_level)
+    compile_warning_flags = settings.get('compile_warning_flags', [])
+    if compile_warning_flags:
+      args.extend(compile_warning_flags)
     if extra_args is not None:
       args.extend(extra_args)
     if compile_options is not None:
