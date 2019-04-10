@@ -21,8 +21,6 @@
     "-Wnewline-eof",
     "-Wno-arc-repeated-use-of-weak",
     "-Wno-constant-logical-operand",
-    "-Wno-error=deprecated",
-    "-Wno-error=deprecated-implementations",
     "-Wno-missing-field-initializers",
     "-Wno-missing-prototypes",
     "-Wno-selector",
