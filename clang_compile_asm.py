@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 
+import re
 import subprocess
 import tempfile
 import threading
@@ -11,6 +12,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   proc = None
   panel = None
   panel_lock = threading.Lock()
+  cfi_re = re.compile(r'''$\s*\.(loh|cfi_).*$''', re.MULTILINE)
 
   def is_enabled(self, arch=None, sdk=None, extra_args=None):
     return True
@@ -160,6 +162,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
         break
 
   def queue_write(self, text):
+    text = self.cfi_re.sub('', text)
     sublime.set_timeout(lambda: self.do_write(text), 1)
 
   def do_write(self, text):
