@@ -63,9 +63,11 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       self.proc.terminate()
       self.proc = None
 
-    args = []
+    args = ['xcrun']
+    if sdk is not None:
+      args.extend(['--sdk', sdk])
 
-    if settings.has('clang_path') and settings.get('clang_path'):
+    if settings.has('clang_path') and os.path.exists(settings.get('clang_path')):
       # Support for custom builds of clang.
       args.append(settings.get('clang_path'))
 
@@ -74,10 +76,6 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       if settings.has('clang_sysroot'):
         args.extend(['-isysroot', settings.get('clang_sysroot')])
     else:
-      args.append('xcrun')
-      args = ['xcrun']
-      if sdk is not None:
-        args.extend(['--sdk', sdk])
       args.append('clang')
 
     if arch is not None:
