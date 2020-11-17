@@ -14,10 +14,10 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   panel_lock = threading.Lock()
   cfi_re = re.compile(r'''$\s*\.(loh|cfi_).*$''', re.MULTILINE)
 
-  def is_enabled(self, arch=None, sdk=None, extra_args=None):
+  def is_enabled(self, arch=None, sdk=None, extra_args=None, device_os=None):
     return True
 
-  def run(self, arch=None, sdk=None, extra_args=None):
+  def run(self, arch=None, sdk=None, extra_args=None, device_os=None):
     active_view = self.window.active_view()
     vars = self.window.extract_variables()
 
@@ -81,6 +81,8 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     if arch is not None:
       if arch == 'llvm':
         args.extend(['-arch', 'arm64', '-emit-llvm'])
+      elif device_os is not None:
+        args.extend(['-target', self.getTarget(sdk, arch, device_os)])
       else:
         args.extend(['-arch', arch])
 
@@ -101,6 +103,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     else:
       # As a fallback if no compile options are found, default to Objective-C++.
       args.extend(['-x', 'objective-c++', '-std=c++11'])
+    args.extend(self.fileCompileArguments(active_view))
     args.append('-S')
     args.append('-o-')
     args.append('-')
@@ -166,6 +169,19 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   def do_write(self, text):
     with self.panel_lock:
       self.panel.run_command('content_append', {'text': text})
+
+  def getTarget(self, sdk, arch, device_os):
+    output = subprocess.check_output(['xcrun', '--sdk', sdk, '--show-sdk-platform-version'])
+    os_version = output.decode('utf-8').rstrip()
+    return "{arch}-apple-{os}{os_version}".format(arch=arch, os=device_os, os_version=os_version)
+
+  def fileCompileArguments(self, view):
+    args = []
+    for region in view.find_all(r'COMPILE ARGUMENTS:\s*[^\n]*', 0):
+      arg_string = view.substr(region)[18:].strip()
+      if len(arg_string) > 0:
+        args.extend(arg_string.split())
+    return args
 
   def shouldUseModules(self, view):
     region = view.find(r'^\s*@import\b', 0)

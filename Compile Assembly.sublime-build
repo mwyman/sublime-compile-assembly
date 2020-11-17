@@ -7,6 +7,7 @@
         "arch": "arm64",
         "sdk": "iphoneos",
         "extra_args": [],
+        "device_os": "ios",
       },
       {
         "name": "arm64 non-ARC",
@@ -14,30 +15,27 @@
         "sdk": "iphoneos",
         "extra_args": ["-fno-objc-arc"],
         "selector": "source.objc, source.objc++",
+        "device_os": "ios",
       },
       {
         "name": "armv7",
         "arch": "armv7",
         "sdk": "iphoneos",
         "extra_args": [],
+        "device_os": "ios",
       },
       {
         "name": "x64",
         "arch": "x86_64",
         "sdk": "iphonesimulator",
         "extra_args": [],
-      },
-      {
-        "name": "i386",
-        "arch": "i386",
-        "sdk": "iphonesimulator",
-        "extra_args": [],
+        "device_os": "ios-simulator",
       },
       {
         "name": "LLVM IL",
         "arch": "llvm",
         "sdk": "iphoneos",
         "extra_args": [],
-      }
+      },
     ]
   }
