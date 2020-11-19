@@ -119,7 +119,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     self.killed = False
 
     current_file_text = active_view.substr(sublime.Region(0, active_view.size()))
-    self.do_write('; Compiled with: "%s"\n' % (' '.join(args)))
+    self.do_write('; Compiled with: %s\n' % (' '.join(args)))
     self.do_write('; -- Piped %d bytes to compiler\n\n' % (len(current_file_text)))
 
     threading.Thread(
