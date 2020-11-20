@@ -183,7 +183,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   def fileCompileArguments(self, view):
     args = []
     for region in view.find_all(r'sublime-compile-assembly-args:\s*[^\n]*', 0):
-      arg_string = view.substr(region)[18:].strip()
+      arg_string = view.substr(region)[30:].strip()
       if len(arg_string) > 0:
         args.extend(arg_string.split())
     return args
