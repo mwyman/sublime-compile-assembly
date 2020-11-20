@@ -93,9 +93,10 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     optimization_level = settings.get('optimization_level', '-Os')
     if optimization_level is not None:
       args.append(optimization_level)
-    compile_warning_flags = settings.get('compile_warning_flags', [])
-    if compile_warning_flags:
-      args.extend(compile_warning_flags)
+    if not self.skipStandardWarnings(active_view):
+      compile_warning_flags = settings.get('compile_warning_flags', [])
+      if compile_warning_flags:
+        args.extend(compile_warning_flags)
     if extra_args is not None:
       args.extend(extra_args)
     if compile_options is not None:
@@ -120,7 +121,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
 
     current_file_text = active_view.substr(sublime.Region(0, active_view.size()))
     self.do_write('; Compiled with: %s\n' % (' '.join(args)))
-    self.do_write('; -- Piped %d bytes to compiler\n\n' % (len(current_file_text)))
+    self.do_write('; -- Piped %d bytes to compiler\n' % (len(current_file_text)))
 
     threading.Thread(
       target=self.write_handle,
@@ -175,9 +176,13 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     os_version = output.decode('utf-8').rstrip()
     return "{arch}-apple-{os}{os_version}".format(arch=arch, os=device_os, os_version=os_version)
 
+  def skipStandardWarnings(self, view):
+    region = view.find(r'sublime-compile-assembly-skip-warnings', 0)
+    return region is not None and not region.empty()
+
   def fileCompileArguments(self, view):
     args = []
-    for region in view.find_all(r'COMPILE ARGUMENTS:\s*[^\n]*', 0):
+    for region in view.find_all(r'sublime-compile-assembly-args:\s*[^\n]*', 0):
       arg_string = view.substr(region)[18:].strip()
       if len(arg_string) > 0:
         args.extend(arg_string.split())
