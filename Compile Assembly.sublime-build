@@ -32,6 +32,13 @@
         "device_os": "ios-simulator",
       },
       {
+        "name": "x64 mac",
+        "arch": "x86_64",
+        "sdk": "macosx",
+        "extra_args": [],
+        "device_os": "macos",
+      },
+      {
         "name": "LLVM IL",
         "arch": "llvm",
         "sdk": "iphoneos",

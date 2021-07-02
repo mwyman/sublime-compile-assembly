@@ -105,7 +105,12 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
       # As a fallback if no compile options are found, default to Objective-C++.
       args.extend(['-x', 'objective-c++', '-std=c++11'])
     args.extend(self.fileCompileArguments(active_view))
-    args.append('-S')
+
+    output_type = self.getOutputType(active_view)
+    if output_type:
+      args.extend(output_type)
+    else:
+      args.append('-S')
     args.append('-o-')
     args.append('-')
     # args.append(vars['file_name'])
@@ -179,6 +184,12 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
   def skipStandardWarnings(self, view):
     region = view.find(r'sublime-compile-assembly-skip-warnings', 0)
     return region is not None and not region.empty()
+
+  def getOutputType(self, view):
+    region = view.find(r'sublime-compile-assembly-output:\s*[^\n]*', 0):
+    if region is not None and not region.empty()
+      return view.substr(region).strip().split()
+    return None
 
   def fileCompileArguments(self, view):
     args = []
