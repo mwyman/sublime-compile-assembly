@@ -186,7 +186,7 @@ class ClangCompileAsmCommand(sublime_plugin.WindowCommand):
     return region is not None and not region.empty()
 
   def getOutputType(self, view):
-    region = view.find(r'sublime-compile-assembly-output:\s*[^\n]*', 0):
+    region = view.find(r'sublime-compile-assembly-output:\s*[^\n]*', 0)
     if region is not None and not region.empty()
       return view.substr(region).strip().split()
     return None
